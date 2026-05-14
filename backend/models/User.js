@@ -10,7 +10,6 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, trim: true },
     googleAuth: { type: Boolean, default: false },
     role: { type: String, enum: ['user', 'admin', 'owner', 'staff'], default: 'user' },
-    refreshToken: { type: String, select: false },
     favorites: {
       pharmacies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pharmacy' }],
       products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
