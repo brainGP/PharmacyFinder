@@ -21,7 +21,7 @@ export default function Header() {
       <div className="hidden md:block border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex gap-1 py-1">
-            <h1 className="px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded-md" >Нүүр</h1>
+            <h1 className="px-3 py-1 text-sm text-green-600 bg-blue-50 rounded-md " >Нүүр</h1>
             <h1 className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 rounded-md">Эмийн сангууд</h1>
             <h1 className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 rounded-md">Бүтээгдэхүүн</h1>
           </div>
