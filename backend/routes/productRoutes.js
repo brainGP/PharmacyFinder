@@ -11,7 +11,9 @@ router.get('/', async (req, res) => {
     if (req.query.status) filter.status = req.query.status;
     if (req.query.search) filter.$text = { $search: req.query.search };
 
-    const products = await Product.find(filter).populate('pharmacyId', 'name address');
+    const limit = req.query.limit ? parseInt(req.query.limit) : 0;
+    const sort = req.query.sort === 'latest' ? { createdAt: -1 } : {};
+    const products = await Product.find(filter).populate('pharmacyId', 'name address').sort(sort).limit(limit);
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });

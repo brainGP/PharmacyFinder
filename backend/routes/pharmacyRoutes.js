@@ -8,7 +8,8 @@ router.get('/', async (req, res) => {
     const filter = req.query.search
       ? { $text: { $search: req.query.search } }
       : {};
-    const pharmacies = await Pharmacy.find(filter).populate('owner', 'firstName lastName email');
+    const limit = req.query.limit ? parseInt(req.query.limit) : 0;
+    const pharmacies = await Pharmacy.find(filter).populate('owner', 'firstName lastName email').limit(limit);
     res.json(pharmacies);
   } catch (err) {
     res.status(500).json({ error: err.message });
