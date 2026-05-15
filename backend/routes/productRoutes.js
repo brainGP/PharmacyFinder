@@ -3,18 +3,47 @@ import Product from '../models/Product.js';
 
 const router = express.Router();
 
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Product.distinct('category', { category: { $ne: null, $ne: '' } });
+    res.json({ categories });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
     const filter = {};
     if (req.query.pharmacyId) filter.pharmacyId = req.query.pharmacyId;
-    if (req.query.category) filter.category = req.query.category;
-    if (req.query.status) filter.status = req.query.status;
-    if (req.query.search) filter.$text = { $search: req.query.search };
+    if (req.query.category)   filter.category = req.query.category;
+    if (req.query.form)       filter.form = req.query.form;
+    if (req.query.status)     filter.status = req.query.status;
+    if (req.query.search)     filter.$text = { $search: req.query.search };
+    if (req.query.minPrice || req.query.maxPrice) {
+      filter.price = {};
+      if (req.query.minPrice) filter.price.$gte = parseFloat(req.query.minPrice);
+      if (req.query.maxPrice) filter.price.$lte = parseFloat(req.query.maxPrice);
+    }
 
-    const limit = req.query.limit ? parseInt(req.query.limit) : 0;
-    const sort = req.query.sort === 'latest' ? { createdAt: -1 } : {};
-    const products = await Product.find(filter).populate('pharmacyId', 'name address').sort(sort).limit(limit);
-    res.json(products);
+    const sortMap = {
+      price_asc:  { price: 1 },
+      price_desc: { price: -1 },
+      name_asc:   { name: 1 },
+      latest:     { createdAt: -1 },
+    };
+    const sort = sortMap[req.query.sort] || {};
+
+    const limit = req.query.limit ? parseInt(req.query.limit) : 12;
+    const page  = req.query.page  ? parseInt(req.query.page)  : 1;
+    const skip  = (page - 1) * limit;
+
+    const [products, total] = await Promise.all([
+      Product.find(filter).populate('pharmacyId', 'name address').sort(sort).skip(skip).limit(limit),
+      Product.countDocuments(filter),
+    ]);
+
+    res.json({ products, total });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -5,9 +5,10 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const filter = req.query.search
-      ? { $text: { $search: req.query.search } }
-      : {};
+    const filter = {};
+    if (req.query.search) filter.$text = { $search: req.query.search };
+    if (req.query.isOpen === 'true') filter.isOpen = true;
+
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
     const pharmacies = await Pharmacy.find(filter).populate('owner', 'firstName lastName email').limit(limit);
     res.json(pharmacies);

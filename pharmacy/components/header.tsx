@@ -1,4 +1,16 @@
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 export default function Header() {
+  const pathname = usePathname();
+
+  const navItems = [
+    { label: "Нүүр", href: "/" },
+    { label: "Эмийн сангууд", href: "/pharmacies" },
+    { label: "Бүтээгдэхүүн", href: "/products" },
+  ];
+
   return (
     <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
 
@@ -18,15 +30,25 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="hidden md:block border-t border-gray-100">
+      <nav className="hidden md:block border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex gap-1 py-1">
-            <h1 className="px-3 py-1 text-sm text-green-600 bg-blue-50 rounded-md " >Нүүр</h1>
-            <h1 className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 rounded-md">Эмийн сангууд</h1>
-            <h1 className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 rounded-md">Бүтээгдэхүүн</h1>
+            {navItems.map(({ label, href }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                  pathname === href
+                    ? "text-green-600 bg-green-50"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
           </div>
         </div>
-      </div>
+      </nav>
 
     </div>
   );
